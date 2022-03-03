@@ -1,0 +1,32 @@
+td{
+    padding: 5px;
+    margin-bottom: 20px;
+}
+
+button{
+    cursor: pointer;
+}
+
+.recipe_header{
+    background-color:#00000026;
+}
+
+.recipe_ingridients,
+.ingridient_row{
+    background-color:#00000012;
+}
+
+
+.recipes_names{
+    width: 40%;
+}
+
+.recipes_descriptions{
+    color: #00000096;
+    width: 30%;
+}
+
+.recipes_makings{
+    width: 30%;
+    font-size: 1em;
+}
