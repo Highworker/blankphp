@@ -8,14 +8,19 @@
 <body>
 <navbar>
     <?php
-    if ($userData['userlogin'] != null){
+    if ($userData != null) {
+        if ($userData['userlogin'] != null){
             echo '<p>Добро пожаловать, '. $userData['userlogin'] .'</p>';
             echo '<p><a href="/logout">Выйти</a></p>';
             echo '<p><a href="/recipes/manage">Управление рецептами</a></p><hr>';
-    } else {
+        } else {
             echo '<p><a href="/login">Войти</a></p>';
             echo '<p><a href="/registration">Регистрация</a></p>';
         }
+    } else {
+        echo '<p><a href="/login">Войти</a></p>';
+        echo '<p><a href="/registration">Регистрация</a></p>';
+    }
     ?>
     <p><a href="/recipes">Рецепты</a></p>
     <p><a href="/ingridients">Ингридиенты</a></p>

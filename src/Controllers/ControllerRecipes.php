@@ -2,8 +2,6 @@
 namespace Sergejandreev\Blankphp\Controllers;
 use Sergejandreev\Blankphp\Core\Controller;
 use Sergejandreev\Blankphp\Core\Database;
-use Sergejandreev\Blankphp\Core\Request;
-use Sergejandreev\Blankphp\Core\View;
 use Sergejandreev\Blankphp\Entities\Recipe;
 use Sergejandreev\Blankphp\Repositories\RecipeRepository;
 use Sergejandreev\Blankphp\Repositories\IngridientRepository;
@@ -13,18 +11,19 @@ class ControllerRecipes extends Controller
     public Recipe $recipeModel;
     private RecipeRepository $recipeRepository;
     private IngridientRepository $ingridientRepository;
+    private Controller $baseController;
 
     public function __construct()
     {
         $this->recipeRepository = new RecipeRepository((new Database())->connection());
         $this->recipeModel = new Recipe();
+        $this->baseController = new Controller();
+        $this->session = $this->baseController->view->getSession();
     }
 
     public function show()
     {
-        $data = $this->recipeRepository->findAll();
-        dd($this->view);
-        // $this->view->pageGenerate('recipes.php', $data);
+        $this->baseController->view->pageGenerate('recipes.php', $this->recipeRepository->findAll(), $this->session->getSessionAsArray());
     }
 
     public function create()
@@ -42,9 +41,8 @@ class ControllerRecipes extends Controller
     public function updateShow()
     {
         if(isset($_POST) || !empty($_POST) || $_POST['recipeid']){
-            $data = $this->recipeRepository->findById($_POST['recipeid']);
+            $this->baseController->view->pageGenerate('recipe_update.php', $this->recipeRepository->findById($_POST['recipeid']), $this->session->getSessionAsArray());
         }
-        $this->view->pageGenerate('recipe_update.php', $data);
     }
 
     public function updateAction()
@@ -63,7 +61,7 @@ class ControllerRecipes extends Controller
 
     public function managebleList()
     {
-        if ($this->view->getAccess() != null){
+        if ($this->session->getSessionAsArray() != null){
             $this->ingridientRepository = new IngridientRepository((new Database())->connection());
             $recipesData = $this->recipeRepository->findAll();
             // TODO: запилить в репозитории выборку НЕ входящих в рецепт ингридиентов (array_diff?), свойство avalible?
@@ -72,7 +70,7 @@ class ControllerRecipes extends Controller
             $recipesData = null;
             $ingridientsData = null;
         }
-        $this->view->pageGenerateWithManage('recipes_manageble.php','ingridients_manageble.php',$recipesData, $ingridientsData);
+        $this->baseController->view->pageGenerateWithManage('recipes_manageble.php','ingridients_manageble.php', $recipesData, $ingridientsData, $this->session->getSessionAsArray());
     }
 
     public function addIngridientToRecipe()

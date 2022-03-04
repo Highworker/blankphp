@@ -9,8 +9,9 @@ class RecipeRepository extends AbstractRepository
     /**
      * @return array
      */
-    public function findAll()
+    public function findAll() :array
     {
+        $recipes = [];
         $stmtRecipes = $this->db->query('
             SELECT 
                    id, 
@@ -39,7 +40,7 @@ class RecipeRepository extends AbstractRepository
      * @param $id
      * @return array
      */
-    public function findAllInboxIngridients($id)
+    public function findAllInboxIngridients($id) :array
     {
         $stmtRecipeIngridients = $this->db->prepare('
             SELECT ingridients.name, ingridients.id
@@ -57,7 +58,7 @@ class RecipeRepository extends AbstractRepository
      * @param $id
      * @return array
      */
-    public function findAllComments($id)
+    public function findAllComments($id) :array
     {
         $stmtRecipeComments = $this->db->prepare('
             SELECT 
@@ -72,7 +73,13 @@ class RecipeRepository extends AbstractRepository
         return $stmtRecipeComments->fetchAll(PDO::FETCH_ASSOC);
     }
 
-    public function checkPossibilityToAddComment(int $recipe_id, int $user_id){
+    /**
+     * @param int $recipe_id
+     * @param int $user_id
+     * @return bool
+     */
+    public function checkPossibilityToAddComment(int $recipe_id, int $user_id) :bool
+    {
         $stmtRecipeComment = $this->db->prepare('
             SELECT 
                    id_recipes, 
@@ -81,8 +88,8 @@ class RecipeRepository extends AbstractRepository
             WHERE id_recipes = :recid
             AND id_users = :userid
         ');
-        $stmtRecipeComment->bindValue(':recid', $recipe_id, PDO::PARAM_STR);
-        $stmtRecipeComment->bindValue(':userid', $user_id, PDO::PARAM_STR);
+        $stmtRecipeComment->bindValue(':recid', $recipe_id, PDO::PARAM_INT);
+        $stmtRecipeComment->bindValue(':userid', $user_id, PDO::PARAM_INT);
         $stmtRecipeComment->execute();
         $responce = $stmtRecipeComment->fetch(PDO::FETCH_ASSOC);
         if (!$responce){
@@ -113,7 +120,7 @@ class RecipeRepository extends AbstractRepository
         ');
         $stmtRecipeComment->bindValue(':recid',$recipe_id, PDO::PARAM_INT);
         $stmtRecipeComment->bindValue(':userid',$user_id, PDO::PARAM_INT);
-        $stmtRecipeComment->bindValue(':comment',$comment, PDO::PARAM_STR);
+        $stmtRecipeComment->bindValue(':comment',$comment);
         $stmtRecipeComment->execute();
     }
 
@@ -122,7 +129,8 @@ class RecipeRepository extends AbstractRepository
      * @param int|null $ingridient_id
      * @return bool
      */
-    public function attachRecipeWithIngridients(?int $recipe_id, ?int $ingridient_id){
+    public function attachRecipeWithIngridients(?int $recipe_id, ?int $ingridient_id) :bool
+    {
         $stmt = $this->db->prepare('
             INSERT INTO recipes_ingridients (
                 id_ingridients,
@@ -143,7 +151,8 @@ class RecipeRepository extends AbstractRepository
      * @param int|null $ingridient_id
      * @return bool
      */
-    public function detachRecipeWithIngridients(?int $recipe_id, ?int $ingridient_id){
+    public function detachRecipeWithIngridients(?int $recipe_id, ?int $ingridient_id) :bool
+    {
         $stmt = $this->db->prepare(
             'DELETE FROM recipes_ingridients
             WHERE id_recipes = :recid
@@ -158,7 +167,7 @@ class RecipeRepository extends AbstractRepository
      * @param $id
      * @return Recipe
      */
-    public function findById($id)
+    public function findById($id) :Recipe
     {
         $stmt = $this->db->prepare('
             SELECT
@@ -188,7 +197,7 @@ class RecipeRepository extends AbstractRepository
      * @param AbstractEntity $recipe
      * @return string
      */
-    public function create(AbstractEntity $recipe)
+    public function create(AbstractEntity $recipe) :string
     {
         $stmt = $this->db->prepare('
             INSERT INTO recipes (
@@ -202,9 +211,9 @@ class RecipeRepository extends AbstractRepository
                 :making
                 )
             ');
-        $stmt->bindValue(':name', $recipe->getName(), PDO::PARAM_STR);
-        $stmt->bindValue(':description', $recipe->getDescription(), PDO::PARAM_STR);
-        $stmt->bindValue(':making', $recipe->getMaking(), PDO::PARAM_STR);
+        $stmt->bindValue(':name', $recipe->getName());
+        $stmt->bindValue(':description', $recipe->getDescription());
+        $stmt->bindValue(':making', $recipe->getMaking());
         $stmt->execute();
         $id = $this->db->lastInsertId();
         $recipe->setId($id);
@@ -215,7 +224,7 @@ class RecipeRepository extends AbstractRepository
      * @param AbstractEntity $recipe
      * @return bool
      */
-    public function update(AbstractEntity $recipe)
+    public function update(AbstractEntity $recipe) :bool
     {
         $stmt = $this->db->prepare('
             UPDATE recipes 
@@ -226,9 +235,9 @@ class RecipeRepository extends AbstractRepository
             WHERE id = :id'
         );
         $stmt->bindValue(':id', $recipe->getId(), PDO::PARAM_INT);
-        $stmt->bindValue(':name', $recipe->getName(), PDO::PARAM_STR);
-        $stmt->bindValue(':description', $recipe->getDescription(), PDO::PARAM_STR);
-        $stmt->bindValue(':making', $recipe->getMaking(), PDO::PARAM_STR);
+        $stmt->bindValue(':name', $recipe->getName());
+        $stmt->bindValue(':description', $recipe->getDescription());
+        $stmt->bindValue(':making', $recipe->getMaking());
         return $stmt->execute();
     }
 
@@ -236,12 +245,12 @@ class RecipeRepository extends AbstractRepository
      * @param AbstractEntity $ingridient
      * @return bool
      */
-    public function delete(AbstractEntity $ingridient)
+    public function delete(AbstractEntity $ingridient) :bool
     {
         $stmt = $this->db->prepare(
             'DELETE FROM recipes
-            WHERE id = :id'
-        );
+            WHERE id = :id
+            ');
         $stmt->bindValue(':id', $ingridient->getId(), PDO::PARAM_INT);
         return $stmt->execute();
     }

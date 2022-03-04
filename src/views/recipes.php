@@ -6,7 +6,8 @@
     </thead>
     <tbody>
             <tr>
-                <?php foreach($data as $item) {
+                <?php
+                foreach($data as $item) {
                     echo '<tr class="recipe_header">';
                     echo '<td class="recipes_names"><h3>'. $item->getName() .'</h3></td>';
                     echo '<td class="recipes_descriptions"></td>';

@@ -3,25 +3,26 @@ namespace Sergejandreev\Blankphp\Controllers;
 use Sergejandreev\Blankphp\Core\Controller;
 use Sergejandreev\Blankphp\Core\Database;
 use Sergejandreev\Blankphp\Entities\Ingridient;
-use Sergejandreev\Blankphp\Core\View;
 use Sergejandreev\Blankphp\Repositories\IngridientRepository;
 
 class ControllerIngridients extends Controller
 {
     private $ingridientModel;
     private IngridientRepository $ingridientRepository;
+    private Controller $baseController;
+
 
     public function __construct()
     {
         $this->ingridientRepository = new IngridientRepository((new Database())->connection());
         $this->ingridientModel = new Ingridient();
-        $this->view = new View();
+        $this->baseController = new Controller();
+        $this->session = $this->baseController->view->getSession();
     }
 
     public function action_list()
     {
-        $data = $this->ingridientRepository->findAll();
-        $this->view->pageGenerate('ingridients.php', $data);
+        $this->baseController->view->pageGenerate('ingridients.php', $this->ingridientRepository->findAll(), $this->session->getSessionAsArray());
     }
 
     public function create()
@@ -35,18 +36,11 @@ class ControllerIngridients extends Controller
         header('Location: /recipes/manage');
     }
 
-    public function show()
-    {
-        $data = $this->ingridientModel->setId($id);
-        $this->view->pageGenerate('cookbook/read.php', $data);
-    }
-
     public function updateShow()
     {
         if(isset($_POST) || !empty($_POST) || $_POST['id']){
-            $data = $this->ingridientRepository->findById($_POST['id']);
+            $this->baseController->view->pageGenerate('ingridient_update.php', $this->ingridientRepository->findById($_POST['id']), $this->session->getSessionAsArray());
         }
-        $this->view->pageGenerate('ingridient_update.php', $data);
     }
 
     public function updateAction()

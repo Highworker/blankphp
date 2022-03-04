@@ -3,14 +3,14 @@ namespace Sergejandreev\Blankphp\Core;
 
 class Request
 {
-    private $storage; //плохое название
+    private $requestStorage;
 
     public function __construct() {
-        $this->storage = $this->cleanInput($_REQUEST);
+        $this->requestStorage = $this->cleanInput($_REQUEST);
     }
 
     public function __get($name) {
-        if (isset($this->storage[$name])) return $this->storage[$name];
+        if (isset($this->requestStorage[$name])) return $this->requestStorage[$name];
     }
 
     private function cleanInput($data) {
@@ -24,13 +24,8 @@ class Request
         return trim(htmlspecialchars($data, ENT_QUOTES));
     }
 
-    public function getRequest() :Request
-    {
-        return $this;
-    }
-
     public function getRequestEntries()
     {
-        return $this -> storage;
+        return $this->requestStorage;
     }
 }

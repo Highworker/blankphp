@@ -8,12 +8,17 @@ use Sergejandreev\Blankphp\Repositories\UserRepository;
 class ControllerAccess extends Controller
 {
     private UserRepository $userRepository;
+    private Controller $baseController;
+
     /**
      * ControllerAccess constructor.
      */
     public function __construct()
     {
         $this->userRepository = new UserRepository((new Database())->connection());
+        $this->baseController = new Controller();
+        $this->session = $this->baseController->getSession();
+        $this->request = $this->baseController->request;
     }
 
     public function action_list()
@@ -24,7 +29,8 @@ class ControllerAccess extends Controller
     public function registrationShow()
     {
         $data[] = 'Укажите логин и пароль';
-        $this->view->pageGenerate('/registration.php', $data);
+        $this->baseController->view->pageGenerate('/registration.php', $data, $this->session->userData);
+
     }
 
     public function registrationAction()
@@ -45,12 +51,13 @@ class ControllerAccess extends Controller
         } else {
             $data[] = 'Форма не отправлена';
         }
-        $this->view->pageGenerate('/registration.php', $data);
+        $this->baseController->view->pageGenerate('/registration.php', $data, $this->session->userData);
     }
 
     public function loginShow()
     {
-        $this->view->pageGenerate('/login.php', null);
+        $data[] = 'Введите логин и пароль, которые были указаны при регистрации';
+        $this->baseController->view->pageGenerate('/login.php', $data, $this->session->userData);
     }
 
     public function loginAction()

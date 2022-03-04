@@ -3,26 +3,42 @@ namespace Sergejandreev\Blankphp\Core;
 
 class View
 {
-    protected Session $session;
+    protected ?Session $session = null;
+    protected ?string $targetPage = null;
 
     public function __construct(Session $session)
     {
         $this->session = $session;
     }
 
-    //TODO: добавить умолчания для $contentView
-    public function pageGenerate(string $contentView, $data = null)
+    public function getSession() :Session
     {
-        if(isset($contentView))
+        return $this->session;
+    }
+
+    public function getView() :View
+    {
+        return $this;
+    }
+
+    public function setTargetPage(string $targetPage)
+    {
+        $this->targetPage = $targetPage;
+    }
+
+    //TODO: добавить умолчания для $contentView
+    public function pageGenerate(string $targetPage, $data, $userData)
+    {
+        if(isset($targetPage))
         {
-            $this->pageMenuShowWithUserData();
-            include 'src/views/'.$contentView;
+            $this->pageMenuShowWithUserData($userData);
+            include 'src/views/'.$targetPage;
         }
     }
 
-    public function pageGenerateWithManage(string $contentView, ?string $additionalContentView, $recipesData = null, $ingridientsData = null)
+    public function pageGenerateWithManage(string $contentView, string $additionalContentView, $recipesData, $ingridientsData, $userData)
     {
-        $this->pageMenuShowWithUserData();
+        $this->pageMenuShowWithUserData($userData);
         if(isset($contentView))
         {
             include 'src/views/'.$contentView;
@@ -34,7 +50,8 @@ class View
         }
     }
 
-    public function pageMenuShowWithUserData($userData = null){
+    public function pageMenuShowWithUserData(array|null $userData)
+    {
         include 'src/views/menu.php';
     }
 }

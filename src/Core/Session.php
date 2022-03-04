@@ -4,7 +4,7 @@ namespace Sergejandreev\Blankphp\Core;
 //TODO 1: запилить методы работы с сессией
 class Session
 {
-    public ?array $userData;
+    public ?array $userData = null;
 
     function __construct()
     {
@@ -23,5 +23,19 @@ class Session
     public function getSession() :Session
     {
         return $this;
+    }
+
+    public function getSessionAsArray() :array|null
+    {
+        return $this->userData;
+    }
+
+    public function getUserLogin() :string|null
+    {
+        if ($this->userData != null){
+            return $this->userData['userlogin'];
+        } else {
+            return null;
+        }
     }
 }

@@ -7,11 +7,11 @@
     </tr>
     </thead>
     <tbody>
-        <?php foreach($data as $item) {
+        <?php
+        foreach($data as $item) {
             echo '<tr class="ingridient_row">';
             echo '<td>' . $item->getName() . '</td>';
             echo '<td>' . $item->getDescription() . '</td>';
-            //echo '<td><a href="#">Удалить</a></td>';
             echo '</tr>';
         }
         ?>
