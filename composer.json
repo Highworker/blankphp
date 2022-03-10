@@ -1,0 +1,21 @@
+{
+    "name": "sergejandreev/blankphp",
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "Sergejandreev\\Blankphp\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Highworker",
+            "email": "derkampfer@yandex.ru"
+        }
+    ],
+    "require-dev": {
+        "symfony/var-dumper": "^6.0"
+    },
+  "require": {
+    "ext-pdo": "*"
+  }
+}
